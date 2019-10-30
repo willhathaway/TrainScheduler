@@ -1,6 +1,6 @@
 const configuration = {
     apiKey: "AIzaSyD42eTyFcQny_NrQh839u-42DUqTTPWP-Q",
-    authDomain: "train-scheduler-e38a6.firebaseio.com",
+    authDomain: "train-scheduler-e38a6.firebaseapp.com",
     databaseURL: "https://train-scheduler-e38a6.firebaseio.com",
     projectId: "train-scheduler-e38a6",
     storageBucket: "train-scheduler-e38a6.appspot.com",
@@ -11,70 +11,83 @@ const configuration = {
 
 firebase.initializeApp(configuration);
 
+// universal variables:
+
 let database = firebase.database();
 
 let trainsReference = database.ref('/trains');
+
+let trainName = '';
+let destination = '';
+let frequency = '';
+let firstDeparture = '';
+let nextArrival = '';
+let minutesAway = '';
 
 console.log(trainsReference);
 
 console.log(moment().format());
 
-database.ref().on('value', function(snap) {
-
-});
-
 // universal functions:
 
-function trainTime(frequency) {
+function trainTime(frequency, firstDeparture) {
 
     // let the starting departure time for all trains = 06:00
 
     // the frequency of stops at the station be used to count the nextArrival time and the minutesAway time
+
+    frequency = $('#frequency-input').val().trim();
+
+    firstDeparture = $('#first-departure-input').val().trim();
+
+
+
 }
 
+$(document).on('click', '#add-train-btn', function (event) {
 
+    event.preventDefault();
 
-$('#add-train-btn').on('click', function (event) {
+    console.log('click');
 
-event.preventDefault();
+    trainName = $('#train-name-input').val().trim();
+    destination = $('#destination-input').val().trim();
+    frequency = $('#frequency-input').val().trim();
+    firstDeparture = $('#first-departure-input').val().trim();
 
-    let trainName = $('#train-name-input').val().trim();
-    let destination = $('#destination-input').val().trim();
-    let frequency = $('#frequency-input').val().trim();
-    let firstDeparture = $('#first-departure-input').val().trim();
+    database.ref().push({
 
-
-    let newTrain = {
         name: trainName,
         destination: destination,
         frequency: frequency,
         firstDeparture: firstDeparture
-    };
 
-    trainsReference.push(newTrain);
+    });
 
-    console.log(newTrain);
-
-    newTrainArray = [newName, newDestination, newFrequency, newNextArrival, newMinutesAway];
-
-    let newRow = $('<tr>')
-
-    let newName = $('<td>');
-    let newDestination = $('<td>');
-    let newFrequency = $('<td>');
-    let newNextArrival = $('<td>');
-    let newMinutesAway = $('<td>');
-
-    $(newName).text(newTrain.name);
-    $(newDestination).text(newTrain.destination);
-    $(newFrequency).text(newTrain.frequency);
-    $(newNextArrival).text('x')
-    $(newMinutesAway).text('x');
-
-    for (let i = 0; i<newTrainArray.length; i++){
-        $(newRow).append(newTrainArray[i]);
-    }
-
-    $("#train-table").append(newRow);
 
 });
+
+database.ref().on('child_added', function (snapshot) {
+
+    console.log(snapshot.val().name);
+    console.log(snapshot.val().destination);
+    console.log(snapshot.val().frequency);
+    console.log(snapshot.val().firstDeparture);
+
+
+    $("#train-table").append("<tr><td>"+
+    snapshot.val().name+
+    "</td><td>" + snapshot.val().destination +
+    "</td><td>" + snapshot.val().frequency +
+    "</td><td>" + nextArrival +
+    "</td><td>" + minutesAway +
+    "</td></tr>");
+
+      // Handle the errors
+    }, function(errorObject) {
+        console.log("Errors handled: " + errorObject.code);
+      });
+    
+    
+
+    

@@ -1,4 +1,13 @@
-#employee-table th,
+
+.card-header {
+  font-weight: bold;
+}
+
+#train-table th {
+  font-weight: bold;
+}
+
+#train-table th,
     td {
       display: inline-block;
       width: 16.575%;
