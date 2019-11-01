@@ -17,32 +17,13 @@ let database = firebase.database();
 
 let trainsReference = database.ref('/trains');
 
-let trainName = '';
-let destination = '';
-let frequency = '';
-let firstDeparture = '';
-let nextArrival = '';
-let minutesAway = '';
 
 console.log(trainsReference);
 
 console.log(moment().format());
 
-// universal functions:
+// functions:
 
-function trainTime(frequency, firstDeparture) {
-
-    // let the starting departure time for all trains = 06:00
-
-    // the frequency of stops at the station be used to count the nextArrival time and the minutesAway time
-
-    frequency = $('#frequency-input').val().trim();
-
-    firstDeparture = $('#first-departure-input').val().trim();
-
-
-
-}
 
 $(document).on('click', '#add-train-btn', function (event) {
 
@@ -50,10 +31,15 @@ $(document).on('click', '#add-train-btn', function (event) {
 
     console.log('click');
 
-    trainName = $('#train-name-input').val().trim();
-    destination = $('#destination-input').val().trim();
-    frequency = $('#frequency-input').val().trim();
-    firstDeparture = $('#first-departure-input').val().trim();
+    let trainName = $('#train-name-input').val().trim();
+    let destination = $('#destination-input').val().trim();
+    let frequency = $('#frequency-input').val().trim();
+    let firstDeparture = $('#first-departure-input').val().trim();
+
+    if (!trainName || !destination || !frequency || !firstDeparture) {
+        alert('Please fill in all fields');
+        return;
+    }
 
     database.ref().push({
 
@@ -75,14 +61,38 @@ database.ref().on('child_added', function (snapshot) {
     console.log(snapshot.val().firstDeparture);
 
 
-    $("#train-table").append("<tr><td>"+
-    snapshot.val().name+
-    "</td><td>" + snapshot.val().destination +
-    "</td><td>" + snapshot.val().frequency +
-    "</td><td>" + nextArrival +
-    "</td><td>" + minutesAway +
-    "</td></tr>");
 
+
+    let frequency = snapshot.val().frequency;
+
+    let firstDeparture = snapshot.val().firstDeparture;
+
+    let firstDepartureConverted = moment(firstDeparture, "HH:mm").subtract(1, "years");
+
+    let timeDifference = moment().diff(firstDepartureConverted, "minutes");
+
+    console.log(timeDifference);
+
+    let timeSinceLastTrain = timeDifference % frequency;
+
+    let minutesAway = frequency - timeSinceLastTrain;
+
+    let nextArrival = moment().add(minutesAway, "minutes").format("HH:mm");
+
+
+
+    let $tr = $('<tr>');
+
+    let $nameTD = $('<td>').text(snapshot.val().name);
+    let $destinationTD = $('<td>').text(snapshot.val().destination);
+    let $frequencyTD = $('<td>').text(snapshot.val().frequency);
+    let $minutesTD = $('<td>').text(nextArrival);
+    let $nextTD = $('<td>').text(minutesAway);
+
+    $tr.append($nameTD, $destinationTD, $frequencyTD, $minutesTD, $nextTD);
+
+    $('#train-table').append($tr);
+    
       // Handle the errors
     }, function(errorObject) {
         console.log("Errors handled: " + errorObject.code);

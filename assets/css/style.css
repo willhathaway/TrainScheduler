@@ -1,3 +1,55 @@
+@import url("https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap");
+
+.container {
+  font-family: 'Josefin Sans', sans-serif;
+  color: black;
+  background-color: #7E8898;
+  padding: 20px;
+}
+
+.parent {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.parent:hover .child,
+.parent:focus .child {
+  transform: scale(1.2);
+}
+
+.child {
+  width: 100%;
+  height: 100%;
+  background-color: black; /* fallback color */
+  background-image: url("../images/train-image.jpg");
+  background-position: center;
+  background-size: cover;
+  transition: all .5s;
+}
+
+.child::before {
+  content: "";
+  display: none;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.parent:hover .child:before,
+.parent:focus .child:before {
+  display: block;
+}
+
+.bg-one {background-image: url("../images/train-image.jpg");}
+
+.child h1 {
+  font-weight: bold;
+  -webkit-text-stroke-width: 1px;
+   -webkit-text-stroke-color: white;
+}
 
 .card-header {
   font-weight: bold;
@@ -10,5 +62,5 @@
 #train-table th,
     td {
       display: inline-block;
-      width: 16.575%;
+      width: 20%;
     }
